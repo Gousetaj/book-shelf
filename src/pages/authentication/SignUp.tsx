@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getUser } from '../utils/indexedDB';
+import { useNavigate, Link } from 'react-router-dom';
+import { addUser } from './../../utils/indexedDB';
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    const user = await getUser(email);
 
-    if (user && user.password === password) {
-      localStorage.setItem('isLoggedIn', 'true');
-      navigate('/dashboard');
-    } else {
-      alert('Invalid email or password');
+    try {
+      await addUser({ email, password });
+      alert('User registered successfully');
+      navigate('/');
+    } catch (error) {
+      alert('Error: Email already exists.');
     }
   };
 
   return (
     <div>
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
+      <h1>Sign Up</h1>
+      <form onSubmit={handleSignUp}>
         <input
           type="email"
           placeholder="Email"
@@ -35,10 +35,11 @@ const Login: React.FC = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Login</button>
+        <button type="submit">Sign Up</button>
       </form>
+      <Link to="/auth/login">Login Instead?</Link>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;

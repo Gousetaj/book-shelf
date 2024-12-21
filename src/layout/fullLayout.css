@@ -1,0 +1,15 @@
+.header{
+    width: 100%;
+}
+.text-center{
+    text-align: center;
+}
+.align-right{
+    display: flex;
+    place-self: flex-end;
+
+}
+.navigation{
+    width: 100%;
+    /* background-color: beige; */
+}

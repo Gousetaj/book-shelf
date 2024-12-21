@@ -6,8 +6,8 @@ const Dashboard: React.FC = () => {
     <div>
       <h1>Dashboard</h1>
       <nav>
-        <ul>
-          <li><Link to="/bookshelf">Bookshelf</Link></li>
+        <ul style={{listStyle:'none'}}>
+          <li ><Link to="/bookshelf">Bookshelf</Link></li>
           <li><Link to="/profile">Profile</Link></li>
         </ul>
       </nav>
