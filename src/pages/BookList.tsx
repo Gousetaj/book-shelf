@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllBooks, deleteBook } from './../utils/indexedDB'; // IndexedDB utilities file
+import Popup from './Popup'; // Import the Popup component
+import './BookList.css';
 
 const BookList = () => {
   const [books, setBooks] = useState<{ id: number; title: string; author: string }[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,10 +21,9 @@ const BookList = () => {
 
   const handleEdit = (book: { id: number; title: string; author: string }) => {
     sessionStorage.setItem('bookToEdit', JSON.stringify(book));
-    sessionStorage.setItem('formTitle','Update Book')
+    sessionStorage.setItem('formTitle', 'Update Book');
     navigate('/BookForm');
   };
-  
 
   const handleDelete = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this book?')) {
@@ -30,6 +33,11 @@ const BookList = () => {
     }
   };
 
+  const handleView = (book: { title: string; author: string }) => {
+    setPopupMessage(`Title: ${book.title}\nAuthor: ${book.author}`);
+    setIsPopupVisible(true);
+  };
+
   const filteredBooks = books.filter(
     (book) =>
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,7 +45,7 @@ const BookList = () => {
   );
 
   return (
-    <div style={{ margin: '10px' }}>
+    <div style={{ margin: '10px' }} className="main-div">
       <h1>Books List</h1>
       <div style={{ margin: '10px 0' }}>
         <input
@@ -53,10 +61,14 @@ const BookList = () => {
             borderRadius: '4px',
           }}
         />
-        <button onClick={() => {
-            sessionStorage.setItem('formTitle','Add Book')
+        <button
+          onClick={() => {
+            sessionStorage.setItem('formTitle', 'Add Book');
             sessionStorage.setItem('bookToEdit', JSON.stringify({}));
-            navigate('/BookForm')}} style={{ margin: '10px' }}>
+            navigate('/BookForm');
+          }}
+          style={{ margin: '10px' }}
+        >
           Add Book
         </button>
       </div>
@@ -81,7 +93,7 @@ const BookList = () => {
                   Delete
                 </button>
                 <button
-                  onClick={() => alert(`Viewing book: ${book.title} by ${book.author}`)}
+                  onClick={() => handleView(book)}
                   style={{ marginLeft: '5px' }}
                 >
                   View
@@ -91,6 +103,15 @@ const BookList = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Popup Component */}
+      {isPopupVisible && (
+        <Popup
+        title='View Form'
+          message={popupMessage}
+          onClose={() => setIsPopupVisible(false)}
+        />
+      )}
     </div>
   );
 };

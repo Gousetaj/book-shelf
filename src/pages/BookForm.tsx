@@ -1,43 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { addBook, updateBook } from './../utils/indexedDB'; // IndexedDB utilities file
 import { useNavigate } from 'react-router-dom';
+import Popup from './Popup'; // Import the Popup component
 
 const BookForm = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const navigate = useNavigate();
-    const formTitle=sessionStorage.getItem('formTitle')
-    const storedBook = JSON.parse(sessionStorage.getItem('bookToEdit')??'{}');
+
+  const formTitle = sessionStorage.getItem('formTitle');
+  const storedBook = JSON.parse(sessionStorage.getItem('bookToEdit') ?? '{}');
 
   useEffect(() => {
-    if (formTitle==='Update Book'||formTitle==='View Book') {
+    if (formTitle === 'Update Book' || formTitle === 'View Book') {
       setTitle(storedBook.title);
       setAuthor(storedBook.author);
     }
-
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formTitle==='Update Book') {
+    if (formTitle === 'Update Book') {
       await updateBook({ id: storedBook.id, title, author });
-      alert('Book updated successfully!');
+      setModalMessage('Book updated successfully!');
     } else {
-      // Adding new book
       await addBook({ title, author });
-      alert('Book added successfully!');
+      setModalMessage('Book added successfully!');
     }
-    sessionStorage.removeItem('bookToEdit');
 
+    setIsModalVisible(true);
+    sessionStorage.removeItem('bookToEdit');
+  };
+
+  const closeModalAndNavigate = () => {
+    setIsModalVisible(false);
     navigate('/BookShelf');
   };
 
   return (
-    <div>
+    <div className="main-div">
       <h1>{formTitle}</h1>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="sub-div">
           <label>Title:</label>
           <input
             type="text"
@@ -46,7 +53,7 @@ const BookForm = () => {
             required
           />
         </div>
-        <div>
+        <div className="sub-div">
           <label>Author:</label>
           <input
             type="text"
@@ -55,10 +62,19 @@ const BookForm = () => {
             required
           />
         </div>
-        <button type="submit">
-          {formTitle==='Update Book' ? 'Update Book' : 'Add Book'}
-        </button>
+        <div className="button-div">
+          <button type="submit">
+            {formTitle === 'Update Book' ? 'Update Book' : 'Add Book'}
+          </button>
+          <button type="button" onClick={() => navigate('/BookShelf')}>
+            Cancel
+          </button>
+        </div>
       </form>
+
+      {isModalVisible && (
+        <Popup message={modalMessage} onClose={closeModalAndNavigate} />
+      )}
     </div>
   );
 };
