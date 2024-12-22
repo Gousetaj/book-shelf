@@ -14,6 +14,7 @@ export const mainRoutes:routes={
     element:lazy(() => import('./../layout/FullLayout')),
     children:[
     {path:'/',name:'Dashboard',element:lazy(() => import('./../pages/Dashboard'))},
-    {path:'/Bookshelf',name:'Bookshelf',element:lazy(()=> import('./../pages/Bookshelf'))},
+    {path:'/Bookshelf',name:'Bookshelf',element:lazy(()=> import('./../pages/BookList'))},
+    {path:'/BookForm',name:'BookForm',element:lazy(()=> import('./../pages/BookForm'))},
     {path:'/Profile',name:'Profile',element:lazy(()=> import('./../pages/Profile'))},
 ]}
